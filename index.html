@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>snsp is a sigma</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background-color: black;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 1rem;
+      z-index: 10;
+      text-shadow: 0 0 8px #b366ff;
+    }
+
+    .bottom-bar a {
+      color: #b366ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .bottom-bar a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="bottom-bar">
+    made by snsp(xpstm) · <a href="https://www.roblox.com/communities/5481960/xs-stuff#!/about" target="_blank">join my Roblox group</a>
+  </div>
+
+  <canvas id="fireCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('fireCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 8 + 2;
+        this.speedY = Math.random() * -1.5 - 1;
+        this.speedX = (Math.random() - 0.5) * 2;
+        this.alpha = 1;
+        this.hue = Math.random() * 20 + 260; // purple hues
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.alpha -= 0.01;
+        if (this.alpha < 0) this.alpha = 0;
+      }
+
+      draw() {
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    let particlesArray = [];
+
+    function handleParticles() {
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+
+        if (particlesArray[i].alpha <= 0) {
+          particlesArray.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < 5; i++) {
+        const x = canvas.width / 2 + (Math.random() - 0.5) * 50;
+        const y = canvas.height - 80;
+        particlesArray.push(new Particle(x, y));
+      }
+
+      handleParticles();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
